@@ -1,4 +1,9 @@
 return {
+	options = {
+		opt = {
+			shell = "/usr/bin/bash"
+		},
+	},
 	plugins = {
 		{
 			"phaazon/hop.nvim",
@@ -21,8 +26,7 @@ return {
 					require('hop').hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })
 				end }
 			}
-		}
-		, {
+		}, {
 		"lervag/vimtex",
 		config = function()
 			vim.cmd('filetype plugin indent on')
@@ -37,6 +41,19 @@ return {
 			vim.cmd('let maplocalleader = ";"')
 		end,
 		lazy = false
-	},
+	}, {
+		"iamcco/markdown-preview.nvim",
+		cmd = { "MarkdownPreviewToggle" },
+		build = "cd app && yarn install",
+		init = function()
+			vim.g.mkdp_filetypes = { "markdown" }
+		end,
+		ft = { "markdown" },
+	}, {
+		"akinsho/toggleterm.nvim",
+		opts = {
+			shell = "/usr/bin/fish"
+		}
+	}
 	}
 }
