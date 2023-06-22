@@ -5,18 +5,41 @@ return {
 		},
 	},
 	lsp = {
+		servers = {
+			"clangd",
+			"lemminx",
+		},
 		config = {
 			clangd = {
 				capabilities = { offsetEncoding = "utf-8" },
+				cmd = { '/usr/bin/clangd' }
+			},
+			lemminx = {
+				cmd = { '/home/devin/lemminx/org.eclipse.lemminx/target/lemminx-linux-aarch_64-0.26.1-SNAPSHOT' }
 			}
 		}
 	},
 	plugins = {
 		{
 			"AstroNvim/astrocommunity",
+			{ import = "astrocommunity.utility.noice-nvim" },
+			{ import = "astrocommunity.pack.java" },
+			-- 下边的两个配置是因为mason可能不会安装指定的插件，所以我们不要它装我们自己装
 			{
-				import = "astrocommunity.pack.java",
-			}
+				"williamboman/mason-lspconfig.nvim",
+				opts = function(_, opts)
+					opts.ensure_installed['lemminx'] = nil
+					for k, v in pairs(opts.ensure_installed) do
+						if v == 'lemminx' then
+							table.remove(opts.ensure_installed, k)
+						end
+					end
+				end,
+			},
+			{
+				"jay-babu/mason-null-ls.nvim",
+				opts = function(_, opts) opts.ensure_installed = {} end,
+			},
 		},
 		{
 			"phaazon/hop.nvim",
@@ -42,6 +65,8 @@ return {
 		},
 		{
 			"lervag/vimtex",
+			enabled = false,
+			lazy = false,
 			config = function()
 				vim.cmd('filetype plugin indent on')
 
@@ -54,7 +79,7 @@ return {
 
 				vim.cmd('let maplocalleader = ";"')
 			end,
-			lazy = false
+
 		},
 		{
 			"iamcco/markdown-preview.nvim",
@@ -62,6 +87,14 @@ return {
 			build = "cd app && yarn install",
 			init = function()
 				vim.g.mkdp_filetypes = { "markdown" }
+				vim.g.mkdp_open_ip = '0.0.0.0'
+				vim.g.mkdp_open_to_the_world = 1
+				vim.cmd([[
+				function! g:EchoUrl(url)
+				:echo a:url
+				endfunction
+				]])
+				vim.g.mkdp_browserfunc = 'g:EchoUrl'
 			end,
 			ft = { "markdown" },
 		},
@@ -72,14 +105,11 @@ return {
 			}
 		},
 		{
-			"hrsh7th/cmp-cmdline",
-		},
-		{
 			"hrsh7th/nvim-cmp",
 			dependencies = {
 				"hrsh7th/cmp-cmdline",
 			},
-			config = function(plugin, opts)
+			config = function(_, opts)
 				-- require("plugins.configs.nvim-cmp")(plugin, opts)
 				local cmp = require('cmp')
 				cmp.setup(opts)
