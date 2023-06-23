@@ -12,7 +12,8 @@ return {
 		config = {
 			clangd = {
 				capabilities = { offsetEncoding = "utf-8" },
-				cmd = { '/usr/bin/clangd' }
+				cmd = { 'clangd', '--background-index', '-j=8', '--clang-tidy',
+					'--all-scopes-completion', '--completion-style=detailed' }
 			},
 			lemminx = {
 				cmd = { '/home/devin/lemminx/org.eclipse.lemminx/target/lemminx-linux-aarch_64-0.26.1-SNAPSHOT' }
@@ -35,6 +36,20 @@ return {
 						end
 					end
 				end,
+			},
+			{
+				"jose-elias-alvarez/null-ls.nvim",
+				-- opts = {
+				-- 	sources = {
+				-- 		require("null-ls").builtins.formatting.clang_format,
+				-- 	}
+				-- }
+				config = function(_, opts)
+					local null_ls = require("null-ls")
+					local source = { null_ls.builtins.formatting.clang_format }
+					null_ls.register(source)
+					null_ls.setup(opts)
+				end
 			},
 			{
 				"jay-babu/mason-null-ls.nvim",
