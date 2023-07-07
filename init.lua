@@ -24,6 +24,47 @@ return {
 		{
 			"AstroNvim/astrocommunity",
 			{ import = "astrocommunity.utility.noice-nvim" },
+			{ import = "astrocommunity.motion.hop-nvim" },
+			{
+				"phaazon/hop.nvim",
+				config = true,
+				keys = function (self, keys)
+					keys = 				{
+					{ 'f', function()
+						local directions = require('hop.hint').HintDirection
+						require('hop').hint_char1({ direction = directions.AFTER_CURSOR, current_line_only = true })
+					end },
+					{ 'F', function()
+						local directions = require('hop.hint').HintDirection
+						require('hop').hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true })
+					end },
+					{ 't', function()
+						local directions = require('hop.hint').HintDirection
+						require('hop').hint_char1({ direction = directions.AFTER_CURSOR, current_line_only = true, hint_offset = -1 })
+					end },
+					{ 'T', function()
+						local directions = require('hop.hint').HintDirection
+						require('hop').hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })
+					end },
+					{
+      			";w",
+      			function() require("hop").hint_words() end,
+      			mode = { "n" },
+      			desc = "Hop hint words",
+    			},
+    			{
+      			";l",
+      			function() require("hop").hint_lines() end,
+      			mode = { "n" },
+      			desc = "Hop hint lines",
+    			},
+				}
+
+					return keys
+				end
+			},
+			-- { import = "astrocommunity.motion.leap-nvim" },
+			-- { import = "astrocommunity.motion.flash-nvim" },
 			{ import = "astrocommunity.pack.java" },
 			-- 下边的两个配置是因为mason可能不会安装指定的插件，所以我们不要它装我们自己装
 			{
@@ -55,28 +96,6 @@ return {
 				"jay-babu/mason-null-ls.nvim",
 				opts = function(_, opts) opts.ensure_installed = {} end,
 			},
-		},
-		{
-			"phaazon/hop.nvim",
-			config = true,
-			keys = {
-				{ 'f', function()
-					local directions = require('hop.hint').HintDirection
-					require('hop').hint_char1({ direction = directions.AFTER_CURSOR, current_line_only = true })
-				end },
-				{ 'F', function()
-					local directions = require('hop.hint').HintDirection
-					require('hop').hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true })
-				end },
-				{ 't', function()
-					local directions = require('hop.hint').HintDirection
-					require('hop').hint_char1({ direction = directions.AFTER_CURSOR, current_line_only = true, hint_offset = -1 })
-				end },
-				{ 'T', function()
-					local directions = require('hop.hint').HintDirection
-					require('hop').hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })
-				end }
-			}
 		},
 		{
 			"lervag/vimtex",
@@ -127,6 +146,12 @@ return {
 			config = function(_, opts)
 				-- require("plugins.configs.nvim-cmp")(plugin, opts)
 				local cmp = require('cmp')
+				opts.sources = cmp.config.sources {
+        	{ name = "nvim_lsp", priority = 750 },
+          { name = "luasnip", priority = 1000 },
+          { name = "buffer", priority = 500 },
+          { name = "path", priority = 250 },
+        }
 				cmp.setup(opts)
 				cmp.setup.cmdline(':', {
 					mapping = cmp.mapping.preset.cmdline(),
