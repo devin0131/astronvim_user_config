@@ -18,9 +18,15 @@ return {
 			relativenumber = true,
 			laststatus = 0,
 			showtabline = 0,
-			-- number = true,
-			-- relative_number = false,
+			smartindent = true,
+			expandtab = false,
+			tabstop = 4,
+			shiftwidth = 4,
+			softtabstop = 4,
 		},
+		g = {
+			autoformat_enabled = false,
+		}
 	},
 	lsp = {
 		servers = {
@@ -171,7 +177,7 @@ return {
 			"akinsho/toggleterm.nvim",
 			opts = {
 				shell = "/opt/homebrew/bin/fish",
-				direction = "horizontal"
+				direction = "vertical"
 			}
 		},
 		{
